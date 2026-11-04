@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>外刊阅读器 · 点词查义</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="toolbar">
+  <div class="tb-left">
+    <button id="shelfBtn" class="btn">书架</button>
+    <button id="openBtn" class="btn primary">打开 PDF</button>
+    <input type="file" id="fileInput" accept="application/pdf,.pdf" hidden>
+    <span id="fileName" class="fname">还没有打开文件</span>
+  </div>
+  <div class="tb-right">
+    <span id="pageLabel" class="page-label">—</span>
+    <div class="zoom-group">
+      <button id="zoomOut" class="btn icon" title="缩小">−</button>
+      <span id="zoomLabel" class="zoom-label">100%</span>
+      <button id="zoomIn" class="btn icon" title="放大">+</button>
+    </div>
+    <button id="fitBtn" class="btn">适应宽度</button>
+    <button id="setBtn" class="btn">设置</button>
+    <button id="wbBtn" class="btn wb-btn">
+      生词本<span id="wbDue" class="badge" hidden>0</span>
+    </button>
+  </div>
+</header>
+
+<main id="viewer" class="viewer">
+  <div id="pages" class="pages"></div>
+  <div id="emptyState" class="empty">
+    <div class="empty-card">
+      <h1>点词即查</h1>
+      <p>把英文外刊 PDF 拖进来，或者点左上角打开。</p>
+      <p class="dim">单击任意单词出中文释义和英文词典释义，拖选整句出翻译。触控板两指捏合可缩放，收录过的词会自动加下划线。</p>
+      <p class="dim">放进书架的外刊，下次打开会自动回到上次那一页。</p>
+    </div>
+  </div>
+</main>
+
+<div id="popup" class="popup" hidden>
+  <div class="popup-head">
+    <div class="pw">
+      <span id="pwWord" class="pw-word"></span>
+      <span id="pwPhonetic" class="pw-phonetic"></span>
+    </div>
+    <button id="pwClose" class="pw-close" title="关闭">×</button>
+  </div>
+  <div id="pwActions" class="pw-actions">
+    <button id="speakUk" class="btn tiny">英音</button>
+    <button id="speakUs" class="btn tiny">美音</button>
+    <button id="saveWord" class="btn tiny accent">收录</button>
+    <button id="copyTr" class="btn tiny" hidden>复制译文</button>
+    <button id="retryTr" class="btn tiny" hidden>重新翻译</button>
+  </div>
+  <div id="pwTrans" class="pw-trans" hidden>
+    <div class="sect-title">原文</div>
+    <div id="trSrc" class="tr-src"></div>
+    <div class="sect-title">译文</div>
+    <div id="trOut" class="tr-out"></div>
+    <div id="trBy" class="tr-by"></div>
+  </div>
+  <div id="pwBody" class="popup-body"></div>
+</div>
+
+<aside id="drawer" class="drawer" hidden>
+  <div class="drawer-head">
+    <div>
+      <h2>生词本</h2>
+      <div id="wbStats" class="wb-stats"></div>
+    </div>
+    <button id="drawerClose" class="pw-close" title="关闭">×</button>
+  </div>
+  <div class="drawer-tabs">
+    <button class="tab is-on" data-tab="all">全部</button>
+    <button class="tab" data-tab="due">待复习</button>
+    <button class="tab" data-tab="mastered">已掌握</button>
+  </div>
+  <div id="wbList" class="wb-list"></div>
+  <div class="drawer-foot">
+    <button id="reviewBtn" class="btn primary wide">开始复习</button>
+    <div class="foot-row">
+      <button id="expAnki" class="btn tiny">导出 Anki</button>
+      <button id="expCsv" class="btn tiny">导出 CSV</button>
+      <button id="expJson" class="btn tiny">备份</button>
+      <button id="impJson" class="btn tiny">导入</button>
+    </div>
+    <div class="foot-row">
+      <button id="remindBtn" class="btn tiny">每日提醒</button>
+      <button id="icsBtn" class="btn tiny">日历文件</button>
+      <button id="clearBtn" class="btn tiny danger">清空</button>
+    </div>
+    <input type="file" id="impInput" accept="application/json,.json" hidden>
+  </div>
+</aside>
+
+<div id="review" class="review" hidden>
+  <div class="review-card">
+    <div class="review-top">
+      <span id="rvProgress" class="rv-progress"></span>
+      <button id="rvClose" class="pw-close" title="退出">×</button>
+    </div>
+    <div class="review-word">
+      <span id="rvWord" class="rv-word"></span>
+      <button id="rvUk" class="btn tiny">英音</button>
+      <button id="rvUs" class="btn tiny">美音</button>
+    </div>
+    <div id="rvPhonetic" class="rv-phonetic"></div>
+    <div id="rvAnswer" class="rv-answer" hidden>
+      <div id="rvCn" class="rv-cn"></div>
+      <div id="rvEn" class="rv-en"></div>
+      <div id="rvCtx" class="rv-ctx"></div>
+    </div>
+    <div class="review-actions">
+      <button id="rvShow" class="btn primary">显示答案</button>
+      <button id="rvOk" class="btn ok" hidden>记得</button>
+      <button id="rvNo" class="btn no" hidden>忘了</button>
+    </div>
+    <div id="rvHint" class="rv-hint"></div>
+  </div>
+</div>
+
+<div id="shelf" class="modal" hidden>
+  <div class="modal-card shelf-card">
+    <div class="modal-top">
+      <h2>书架</h2>
+      <button id="shelfClose" class="pw-close" title="关闭">×</button>
+    </div>
+    <p id="shelfNote" class="modal-note dim"></p>
+    <div id="shelfList" class="shelf-list"></div>
+    <div class="modal-foot">
+      <button id="shelfAdd" class="btn tiny primary">添加 PDF</button>
+      <span class="grow"></span>
+      <button id="shelfDismiss" class="btn tiny">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div id="settings" class="modal" hidden>
+  <div class="modal-card">
+    <div class="modal-top">
+      <h2>设置</h2>
+      <button id="setClose" class="pw-close" title="关闭">×</button>
+    </div>
+
+    <div class="field">
+      <label for="setProvider">句子翻译引擎</label>
+      <select id="setProvider">
+        <option value="free">免费在线翻译，免配置，需要联网</option>
+        <option value="llm">自定义大模型接口，译文更地道</option>
+      </select>
+    </div>
+
+    <div id="llmFields" hidden>
+      <div class="field">
+        <label for="setBase">接口地址</label>
+        <input id="setBase" type="text" placeholder="https://api.openai.com/v1" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="setKey">API Key</label>
+        <input id="setKey" type="password" placeholder="sk-..." spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="setModel">模型名</label>
+        <input id="setModel" type="text" placeholder="gpt-4o-mini" spellcheck="false">
+      </div>
+      <p class="modal-note dim">任何 OpenAI 兼容接口都能填，比如各家国产大模型的兼容端点。</p>
+    </div>
+
+    <div class="modal-foot">
+      <button id="setTest" class="btn tiny">测试接口</button>
+      <span id="setMsg" class="set-msg"></span>
+      <span class="grow"></span>
+      <button id="setCancel" class="btn tiny">取消</button>
+      <button id="setSave" class="btn tiny primary">保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="dropMask" class="drop-mask" hidden><span>松手打开这份 PDF</span></div>
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

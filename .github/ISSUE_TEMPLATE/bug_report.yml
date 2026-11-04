@@ -1,0 +1,64 @@
+name: 问题反馈
+description: 用着不对、报错、或者某本 PDF 打不开
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。请尽量补齐下面几项，缺信息的 issue 很难定位。
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: 你用的是哪种方式
+      options:
+        - 外刊阅读器.app
+        - python3 serve.py
+        - 单文件版 HTML
+    validations:
+      required: true
+
+  - type: input
+    id: env
+    attributes:
+      label: 系统与 Python 版本
+      placeholder: macOS 15.2, Python 3.13.1
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 具体发生了什么
+      description: 点哪个词、第几页、期待什么结果、实际什么结果
+      placeholder: 第 12 页点 hyperscale，卡片没出来，控制台报 Uncaught TypeError
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 打开 PDF
+        2. 翻到第 12 页
+        3. 点右上角第二个词
+    validations:
+      required: false
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 控制台报错
+      description: 浏览器按 F12，Console 面板里红色的部分。`.app` 模式可以右键选「检查」
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      options:
+        - label: 我确认这份 PDF 有文本层，在预览里能用鼠标选中文字
+          required: false

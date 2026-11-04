@@ -1,0 +1,43 @@
+name: 功能建议
+description: 想要什么能力，说场景就行，不用想实现方式
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        先说清楚你读什么、怎么读，比直接给方案有用。
+
+  - type: textarea
+    id: scene
+    attributes:
+      label: 你遇到什么场景
+      placeholder: 读到一半想回头找前面提过的某个概念，80 页只能一页页翻
+    validations:
+      required: true
+
+  - type: textarea
+    id: now
+    attributes:
+      label: 现在怎么凑合的
+      placeholder: 用系统预览另开一份搜关键词，然后再切回来找页码
+    validations:
+      required: false
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: 你希望它怎么工作
+      description: 可选。有想法就写，没有也没关系
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 对你来说多重要
+      options:
+        - 没有它就不太想用
+        - 有了会顺手很多
+        - 锦上添花
+    validations:
+      required: true

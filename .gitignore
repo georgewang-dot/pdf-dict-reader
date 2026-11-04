@@ -1,0 +1,33 @@
+# 个人阅读数据，不入库
+wordbook.json
+wordbook.json.bak*
+shelf.json
+
+# 书架上的 PDF 副本，只留本机。版权内容一律不上传
+library/*
+!library/.gitkeep
+
+# 示例 PDF 同样不上传，只留说明
+sample/*
+!sample/.gitkeep
+!sample/README.md
+
+# 词库原始快照，66MB，用 build_dict.py 自行下载生成 data/dict
+_data/
+
+# 构建产物，走 GitHub Releases 分发
+外刊阅读器.app/
+外刊阅读器-单文件版.html
+assets/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# 内部交接文档，不随仓库公开
+CODEX_HANDOFF.md
+
+# 系统与编辑器
+.DS_Store
+.vscode/
+.idea/
